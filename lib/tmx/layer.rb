@@ -4,7 +4,7 @@ module TMX
     attr_reader :width, :height
     
     def initialize data, properties
-      super data.bytes.to_a
+      super data.unpack('N*')
       
       @properties = properties.dup
       

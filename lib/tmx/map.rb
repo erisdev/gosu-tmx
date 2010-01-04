@@ -12,7 +12,10 @@ module TMX
     def initialize window, file_name, options = {}
       options = DEFAULT_OPTIONS.merge options
       
-      mapdef = File.open(file_name) do |io|
+      # this needs to be saved for tileset loading
+      @file_name = file_name
+      
+      mapdef = File.open(@file_name) do |io|
         doc = Nokogiri::XML(io) { |conf| conf.noent.noblanks }
         # TODO validate xml???
         doc.root
@@ -35,7 +38,7 @@ module TMX
       
       @properties = mapdef.parse_properties
       
-      @tile_set      = Array[]
+      @tile_sets     = Hash[]
       @layers        = Hash[]
       @object_groups = Hash[]
       
@@ -43,7 +46,9 @@ module TMX
       @on_object = options[:on_object]
       
       mapdef.xpath('tileset').each do |xml|
-        $stderr.puts xml
+        tile_set = create_tile_set xml
+        name     = tile_set.properties[:name]
+        @tile_sets[name] = tile_set
       end
       
       mapdef.xpath('layer').each do |xml|
@@ -62,13 +67,16 @@ module TMX
     
     def tile index
       if index.zero? then nil
-      else @tile_set[index - 1]
+      else @all_tiles[index - 1]
       end
     end
     
     protected
     
     def create_tile_set xml
+      properties = xml.parse_attributes
+      image_path = File.absolute_path xml.xpath('image/@source').first.value, File.dirname(@file_name)
+      TileSet.new @window, image_path, properties
     end
     
     def create_layer xml
