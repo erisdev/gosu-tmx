@@ -1,7 +1,7 @@
-require 'base64'
-require 'gosu'
-require 'nokogiri'
-require 'zlib'
+autoload :Base64,   'base64'
+autoload :Gosu,     'gosu'
+autoload :Nokogiri, 'nokogiri'
+autoload :Zlib,     'zlib'
 
 require 'tmx/nokogiri_additions'
 

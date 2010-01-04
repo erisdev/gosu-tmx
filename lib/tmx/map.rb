@@ -36,7 +36,7 @@ module TMX
         ? 1.0 / [@tile_height, @tile_width].min \
         : false
       
-      @properties = mapdef.parse_properties
+      @properties = mapdef.tmx_parse_properties
       
       @tile_sets     = Hash[]
       @layers        = Hash[]
@@ -74,18 +74,18 @@ module TMX
     protected
     
     def create_tile_set xml
-      properties = xml.parse_attributes
+      properties = xml.tmx_parse_attributes
       image_path = File.absolute_path xml.xpath('image/@source').first.value, File.dirname(@file_name)
       TileSet.new @window, image_path, properties
     end
     
     def create_layer xml
-      properties = xml.parse_properties.merge! xml.parse_attributes
+      properties = xml.tmx_parse_properties.merge! xml.tmx_parse_attributes
       Layer.new xml.data, properties
     end
     
     def create_object_group xml
-      properties = xml.parse_properties.merge! xml.parse_attributes
+      properties = xml.tmx_parse_properties.merge! xml.tmx_parse_attributes
       group = ObjectGroup.new properties
       
       xml.xpath('object').each do |child|
@@ -96,7 +96,7 @@ module TMX
     end # create_object_group
     
     def create_object xml, group
-      properties = xml.parse_properties.merge! xml.parse_attributes
+      properties = xml.tmx_parse_properties.merge! xml.tmx_parse_attributes
       name       = properties.delete(:name)
       
       [:x, :y, :width, :height].each do |key|
