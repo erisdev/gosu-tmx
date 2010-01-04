@@ -14,12 +14,12 @@ module TMX
     def initialize window, file_name, options = {}
       options = DEFAULT_OPTIONS.merge options
       
-      # this needs to be saved for tileset loading
-      @file_name = file_name
-      
-      mapdef = File.open(@file_name) do |io|
+      mapdef = File.open(file_name) do |io|
         doc = Nokogiri::XML(io) { |conf| conf.noent.noblanks }
-        # TODO validate xml???
+        
+        # TODO figure out why this always fails
+        # errors = doc.validate
+        
         doc.root
       end
       
@@ -77,7 +77,7 @@ module TMX
     
     def create_tile_set xml
       properties = xml.tmx_parse_attributes
-      image_path = File.absolute_path xml.xpath('image/@source').first.value, File.dirname(@file_name)
+      image_path = File.absolute_path xml.xpath('image/@source').first.value, File.dirname(xml.document.url)
       TileSet.new @window, image_path, properties
     end
     
