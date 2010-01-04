@@ -17,9 +17,11 @@
    H4sIAAAAAAAAA82T4QqAIAyEZ1Jakb3/27YjB2MMMfvjwSHMfTp1BiIqg47sTOPKk/EXvWeCAnupLmqMDR7aa95RnVQumfye+vV6GM+PfEtgV/b9g5/p/UR4u+jEe3ncSTIx9Ia9J4/H3pvDezUmwwvbw0uN0h+658Stv4t59NIDVh+CwAAEAAA=
   </data>
  </layer>
- <objectgroup name="objects" width="16" height="16">
+ <objectgroup name="boxes" width="16" height="16">
   <object name="cardboard_box" type="box" x="160" y="160" width="32" height="32"/>
   <object name="stone_block" type="box" x="192" y="32" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup name="doors" width="16" height="16">
   <object name="door1" type="door" x="128" y="208" width="16" height="32">
    <properties>
     <property name="target" value="door2"/>

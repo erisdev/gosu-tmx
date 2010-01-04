@@ -1,5 +1,9 @@
 require 'gosu'
+require 'nokogiri'
+
+require 'tmx/nokogiri_additions'
 
 module TMX
-  autoload :Map, 'tmx/map'
+  autoload :Layer, 'tmx/layer'
+  autoload :Map,   'tmx/map'
 end

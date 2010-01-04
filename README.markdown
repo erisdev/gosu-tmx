@@ -2,6 +2,11 @@
 
 Move along, folks. Nothing to see here.
 
+## PREREQUISITES
+
+* nokogiri
+* gosu
+
 ## AUTHORS
 
 * Eris <<eris.discord@gmail.com>>
