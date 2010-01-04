@@ -10,7 +10,7 @@ module TMX
     def initialize width, height, data, options = {}
       options = DEFAULT_OPTIONS.merge options
       
-      super data
+      super Coder.decode(data, options[:compression], options[:encoding])
       @width  = width
       @height = height
     end
