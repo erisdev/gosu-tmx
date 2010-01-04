@@ -1,18 +1,15 @@
 module TMX
   class Layer < Array
-    DEFAULT_OPTIONS = {
-      :encoding    => nil,
-      :compression => nil,
-    }
-    
+    attr_reader :properties
     attr_reader :width, :height
     
-    def initialize width, height, data, options = {}
-      options = DEFAULT_OPTIONS.merge options
+    def initialize data, properties
+      super data.bytes.to_a
       
-      super Coder.decode(data, options[:compression], options[:encoding])
-      @width  = width
-      @height = height
+      @properties = properties.dup
+      
+      @width  = @properties.delete(:width)  or raise ArgumentError, "layer width is required"
+      @height = @properties.delete(:height) or raise ArgumentError, "layer height is required"
     end
     
     def [] x, y

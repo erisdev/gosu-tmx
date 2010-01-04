@@ -28,11 +28,20 @@ class Nokogiri::XML::Element
   end
   
   def parse_properties
-    properties_element = xpath('./properties') or return {}
-    properties_element.xpath('./property').reduce({}) do |h, property|
+    properties_element = xpath('properties').first or return {}
+    properties_element.xpath('property').reduce({}) do |h, property|
       name  = property.attribute('name').to_sym
       value = property.attribute('value').parse
       h.merge! name => value
     end
+  end
+  
+  def data
+    data = ''
+    xpath('data').each do |data_element|
+      attrs = data_element.parse_attributes
+      data << TMX::Coder.decode(data_element.text, attrs[:compression], attrs[:encoding])
+    end
+    data
   end
 end

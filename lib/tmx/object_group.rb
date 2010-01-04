@@ -2,8 +2,11 @@ module TMX
   class ObjectGroup
     include Enumerable
     
-    def initialize *objects
-      @objects = objects.to_a.reduce({}) { |h, obj| h.merge! obj.object_id => obj }
+    attr_reader :properties
+    
+    def initialize properties = {}
+      @properties = properties
+      @objects = Hash[]
     end
     
     def add obj
@@ -14,7 +17,7 @@ module TMX
       @objects.delete obj.object_id
     end
     
-    def each &block = nil
+    def each &block
       @objects.each_value &block
     end
   end

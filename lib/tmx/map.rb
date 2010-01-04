@@ -6,9 +6,7 @@ module TMX
     
     DEFAULT_OPTIONS = {
       :scale_units => true,
-      
-      :on_object_group => nil,
-      :on_object       => nil,
+      :on_object   => nil,
     }
     
     def initialize window, file_name, options = {}
@@ -16,12 +14,14 @@ module TMX
       
       mapdef = File.open(file_name) do |io|
         doc = Nokogiri::XML(io) { |conf| conf.noent.noblanks }
-        
+        # TODO validate xml???
         doc.root
       end
       
       raise "Only version 1.0 maps are currently supported" unless mapdef['version']     == '1.0'
       raise "Only orthogonal maps are currently supported"  unless mapdef['orientation'] == 'orthogonal'
+      
+      @window = window
       
       @tile_width  = mapdef['tilewidth'].to_i
       @tile_height = mapdef['tileheight'].to_i
@@ -33,40 +33,59 @@ module TMX
         ? 1.0 / [@tile_height, @tile_width].min \
         : false
       
-      mapdef.children.each do |e|
-        case e.name
-        when 'properties'  then @properties = e.parse_properties
-        when 'tileset'     then create_tile_set e
-        when 'layer'       then create_layer e
-        when 'objectgroup' then create_object_group e
-        end
+      @properties = mapdef.parse_properties
+      
+      @tile_set      = Array[]
+      @layers        = Hash[]
+      @object_groups = Hash[]
+      
+      # callback for custom object creation
+      @on_object = options[:on_object]
+      
+      mapdef.xpath('tileset').each do |xml|
+        $stderr.puts xml
       end
       
-      # callbacks for custom object creation
-      @on_object_group = options[:on_object_group]
-      @on_object       = options[:on_object]
+      mapdef.xpath('layer').each do |xml|
+        layer = create_layer xml
+        name  = layer.properties[:name]
+        @layers[name] = layer
+      end # layers
+      
+      mapdef.xpath('objectgroup').each do |xml|
+        group = create_object_group xml
+        name  = group.properties[:name]
+        @object_groups[name] = group
+      end # object groups
+      
+    end # initialize
+    
+    def tile index
+      if index.zero? then nil
+      else @tile_set[index - 1]
+      end
     end
     
     protected
     
-    def create_tile_set tsdef
+    def create_tile_set xml
     end
     
-    def create_layer layerdef
+    def create_layer xml
+      properties = xml.parse_properties.merge! xml.parse_attributes
+      Layer.new xml.data, properties
     end
     
     def create_object_group xml
       properties = xml.parse_properties.merge! xml.parse_attributes
-      name       = properties.delete(:name)
+      group = ObjectGroup.new properties
       
-      group = on_object_group name, properties
-      
-      xml.children.each do |child|
+      xml.xpath('object').each do |child|
         create_object child, group
       end
       
       group
-    end
+    end # create_object_group
     
     def create_object xml, group
       properties = xml.parse_properties.merge! xml.parse_attributes
@@ -79,20 +98,11 @@ module TMX
       on_object name, group, properties
     end
     
-    def on_object_group name, properties
-      if @on_object_group
-        @on_object_group.call name, properties
-      else
-        $stderr.puts "OBJECT GROUP #{name} #{properties.inspect}"
-        name
-      end
-    end # on_object_group
-    
     def on_object name, group, properties
       if @on_object
         @on_object.call group, name, properties
       else
-        $stderr.puts "OBJECT #{name} of #{group} #{properties.inspect}"
+        properties
       end
     end # on_object
     
