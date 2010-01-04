@@ -5,13 +5,13 @@ module TMX
     autoload :Gzip,   'tmx/coder/gzip'
     
     def self.encode str, *encodings
-      encodings.reduce(str) do |data, encoding|
+      encodings.reject(&:nil?).reduce(str) do |data, encoding|
         find_coder(encoding).encode(data)
       end
     end # encode
     
     def self.decode str, *encodings
-      encodings.reverse.reduce(str) do |data, encoding|
+      encodings.reject(&:nil?).reverse.reduce(str) do |data, encoding|
         find_coder(encoding).decode(data)
       end
     end # decode
