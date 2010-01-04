@@ -35,9 +35,42 @@ quarter life.
 * nokogiri
 * gosu
 
+## LICENSE
+
+This software is available under the terms of the MIT license for no better
+reason than that this is the license of Gosu itself. This means that you are
+technically allowed to use my hard work as part of your proprietary,
+commercial product with no obligation to give anything back but credit where
+it's due. Use your discretion on that one.
+
+The full license is reproduced here for posterity:
+
+> Copyright © 2009–2010 Eris
+> 
+> Permission is hereby granted, free of charge, to any person
+> obtaining a copy of this software and associated documentation
+> files (the "Software"), to deal in the Software without
+> restriction, including without limitation the rights to use,
+> copy, modify, merge, publish, distribute, sublicense, and/or sell
+> copies of the Software, and to permit persons to whom the
+> Software is furnished to do so, subject to the following
+> conditions:
+> 
+> The above copyright notice and this permission notice shall be
+> included in all copies or substantial portions of the Software.
+> 
+> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+> EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+> OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+> NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+> WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> OTHER DEALINGS IN THE SOFTWARE.
+
 ## AUTHORS
 
-* Eris <<eris.discord@gmail.com>>
+* Eris <eris.discord@gmail.com>
 * your name here!
 
 ## SEE ALSO
@@ -47,7 +80,7 @@ quarter life.
 * [Chipmunk][], a 2D rigid body physics engine in C
 * [chipmunk-ffi][], more up-to-date Ruby bindings for Chipmunk
 * [Tiled][], a flexible tile map editor and the origin of the TMX format (I
-        think).
+  think).
 
 [chingu]: http://github.com/ippa/chingu
 [chipmunk]: http://code.google.com/p/chipmunk-physics
