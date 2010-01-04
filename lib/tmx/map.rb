@@ -4,6 +4,8 @@ module TMX
     attr_reader :width,      :height
     attr_reader :tile_width, :tile_height
     
+    attr_reader :tile_sets, :layers, :object_groups
+    
     DEFAULT_OPTIONS = {
       :scale_units => true,
       :on_object   => nil,
@@ -81,7 +83,7 @@ module TMX
     
     def create_layer xml
       properties = xml.tmx_parse_properties.merge! xml.tmx_parse_attributes
-      Layer.new xml.data, properties
+      Layer.new xml.tmx_data, properties
     end
     
     def create_object_group xml

@@ -1,7 +1,10 @@
 autoload :Base64,   'base64'
 autoload :Gosu,     'gosu'
 autoload :Nokogiri, 'nokogiri'
-autoload :Zlib,     'zlib'
+# autoload :Zlib,     'zlib'
+
+# mysterious autoload failure
+require 'zlib'
 
 require 'tmx/nokogiri_additions'
 
