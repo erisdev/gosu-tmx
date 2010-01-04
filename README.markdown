@@ -22,6 +22,16 @@ single array once the tile sets are loaded. This would make it somewhat more
 difficult to switch tiles or tile sets on the fly, which is something I'd like
 to be able to do eventually. Any ideas?
 
+Validating the XML document to its DTD would be nice too, but I'll be buggered
+if I can get Nokogiri to actually load the DTD. There is inadequate or no
+documentation on this topic. Probably we'll just have mysterious failures on
+unsupported or erroneous TMX files, which is not ideal.
+
+Possible consideration for the future: move the dependency on Gosu into a
+separate, mixable, matchable module. Maybe add explicit Chingu support too.
+Handle tile set creation and drawing ops the same way we do object creation:
+define a callback hook and let the user take care of it. Awesome.
+
 Help is welcome, obviously.
 
 ## INSTALL
