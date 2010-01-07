@@ -1,6 +1,7 @@
 autoload :Base64,   'base64'
 autoload :Gosu,     'gosu'
 autoload :Nokogiri, 'nokogiri'
+autoload :WeakRef,  'weakref'
 # autoload :Zlib,     'zlib'
 
 # mysterious autoload failure

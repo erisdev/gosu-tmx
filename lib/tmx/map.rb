@@ -1,5 +1,7 @@
 module TMX
   class Map
+    attr_reader :window
+    
     attr_reader :properties
     attr_reader :width,      :height
     attr_reader :tile_width, :tile_height
@@ -40,6 +42,8 @@ module TMX
       
       @properties = mapdef.tmx_parse_properties
       
+      @all_tiles = []
+      
       @tile_sets     = Hash[]
       @layers        = Hash[]
       @object_groups = Hash[]
@@ -65,30 +69,31 @@ module TMX
         @object_groups[name] = group
       end # object groups
       
+      rebuild_tile_set!
     end # initialize
     
-    def tile index
-      if index.zero? then nil
-      else @all_tiles[index - 1]
+    def rebuild_tile_set!
+      @tile_sets.each_value do |tile_set|
+        @all_tiles[tile_set.range] = tile_set.tiles
       end
-    end
+    end # rebuild_tile_set!
     
     protected
     
     def create_tile_set xml
       properties = xml.tmx_parse_attributes
       image_path = File.absolute_path xml.xpath('image/@source').first.value, File.dirname(xml.document.url)
-      TileSet.new @window, image_path, properties
+      TileSet.new self, image_path, properties
     end
     
     def create_layer xml
       properties = xml.tmx_parse_properties.merge! xml.tmx_parse_attributes
-      Layer.new xml.tmx_data, properties
+      Layer.new self, xml.tmx_data, properties
     end
     
     def create_object_group xml
       properties = xml.tmx_parse_properties.merge! xml.tmx_parse_attributes
-      group = ObjectGroup.new properties
+      group = ObjectGroup.new self, properties
       
       xml.xpath('object').each do |child|
         create_object child, group

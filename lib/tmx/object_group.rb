@@ -4,10 +4,13 @@ module TMX
     
     attr_reader :properties
     
-    def initialize properties = {}
+    def initialize map, properties = {}
+      @map        = WeakRef.new map
       @properties = properties
-      @objects = Hash[]
+      @objects    = Hash[]
     end
+    
+    def map; @map.__getobj__ end
     
     def add obj
       @objects[obj.object_id] = obj
