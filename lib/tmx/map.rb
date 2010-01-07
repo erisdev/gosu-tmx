@@ -42,8 +42,6 @@ module TMX
       
       @properties = mapdef.tmx_parse_properties
       
-      @all_tiles = []
-      
       @tile_sets     = Hash[]
       @layers        = Hash[]
       @object_groups = Hash[]
@@ -69,14 +67,46 @@ module TMX
         @object_groups[name] = group
       end # object groups
       
-      rebuild_tile_set!
+      rebuild_map_cache!
     end # initialize
     
-    def rebuild_tile_set!
+    def rebuild_global_tile_set!
+      @global_tile_set = []
       @tile_sets.each_value do |tile_set|
-        @all_tiles[tile_set.range] = tile_set.tiles
+        @global_tile_set[tile_set.range] = tile_set.tiles
       end
-    end # rebuild_tile_set!
+    end
+    
+    def rebuild_map_cache!
+      rebuild_global_tile_set! unless @global_tile_set
+      @map_cache = []
+      @layers.each_value.with_index do |layer, layer_index|
+        (0...@height).each do |y|
+          (0...@width).each do |x|
+            index   = _cache_tile_index layer_index, x, y
+            tile_id = layer[x, y]
+            @map_cache[index] = @global_tile_set[tile_id]
+          end
+        end
+      end
+    end # rebuild_map!
+    
+    def draw x_off, y_off, z_off = 0, x_range = 0...@width, y_range = 0...@height
+      y_range.each do |y|
+        tile_y_off = y_off + y * @tile_height
+        
+        x_range.each do |x|
+          tile_x_off = x_off + x * @tile_width
+          
+          range = _cache_tile_range x, y 
+          @map_cache[range].each.with_index do |image, z|
+            next if image.nil?
+            image.draw tile_x_off, tile_y_off, z_off + z
+          end
+          
+        end
+      end
+    end # draw
     
     protected
     
@@ -121,5 +151,13 @@ module TMX
       end
     end # on_object
     
+    def _cache_tile_index layer_index, x, y
+      y * @width * @layers.count + x * @layers.count + layer_index
+    end
+    
+    def _cache_tile_range x, y
+      first = _cache_tile_index 0, x, y
+      first...(first + @layers.count)
+    end
   end # Map
 end

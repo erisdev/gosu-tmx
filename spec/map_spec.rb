@@ -36,7 +36,12 @@ describe 'Map' do
     end
   end
   
-  it 'can fetch arbitrary tile images'
-  it 'can draw itself'
+  it 'can draw itself' do
+    $window.run_test\
+      :time   => 1.0,
+      :before => proc { @x, @y = 0, 0 },
+      :update => proc { @y -= 1 },
+      :draw   => proc { $map.draw @x, @y },
+  end
   
 end
