@@ -52,19 +52,19 @@ module TMX
       @on_object = options[:on_object]
       
       mapdef.xpath('tileset').each do |xml|
-        tile_set = create_tile_set xml
+        tile_set = parse_tile_set_def xml
         name     = tile_set.properties[:name]
         @tile_sets[name] = tile_set
       end
       
       mapdef.xpath('layer').each do |xml|
-        layer = create_layer xml
+        layer = parse_layer_def xml
         name  = layer.properties[:name]
         @layers[name] = layer
       end # layers
       
       mapdef.xpath('objectgroup').each do |xml|
-        group = create_object_group xml
+        group = parse_object_group_def xml
         name  = group.properties[:name]
         @object_groups[name] = group
       end # object groups
@@ -80,29 +80,29 @@ module TMX
     
     protected
     
-    def create_tile_set xml
+    def parse_tile_set_def xml
       properties = xml.tmx_parse_attributes
       image_path = File.absolute_path xml.xpath('image/@source').first.value, File.dirname(xml.document.url)
       TileSet.new self, image_path, properties
     end
     
-    def create_layer xml
+    def parse_layer_def xml
       properties = xml.tmx_parse_properties.merge! xml.tmx_parse_attributes
       Layer.new self, xml.tmx_data, properties
     end
     
-    def create_object_group xml
+    def parse_object_group_def xml
       properties = xml.tmx_parse_properties.merge! xml.tmx_parse_attributes
       group = ObjectGroup.new self, properties
       
       xml.xpath('object').each do |child|
-        create_object child, group
+        parse_object_def child, group
       end
       
       group
-    end # create_object_group
+    end # parse_object_group_def
     
-    def create_object xml, group
+    def parse_object_def xml, group
       properties = xml.tmx_parse_properties.merge! xml.tmx_parse_attributes
       name       = properties.delete(:name)
       
