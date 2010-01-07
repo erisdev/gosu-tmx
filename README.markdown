@@ -13,14 +13,10 @@ well. :)
 
 ### WHAT IS MISSING
 
-Pretty much everything useful. So far, map data is loaded and layers, object
-groups and tile sets are created. What's missing is a way to actually retrieve
-tiles by gid and draw the map.
-
-The obvious (and probably fast) way would be to load all the tiles into a
-single array once the tile sets are loaded. This would make it somewhat more
-difficult to switch tiles or tile sets on the fly, which is something I'd like
-to be able to do eventually. Any ideas?
+Here's what's not: so far, map data is loaded and layers, object groups and
+tile sets are created and the map is capable of drawing itself. Needs a better
+way to cache the tile layout so it doesn't have to be rebuilt every time
+something changes.
 
 Validating the XML document to its DTD would be nice too, but I'll be buggered
 if I can get Nokogiri to actually load the DTD. There is inadequate or no
