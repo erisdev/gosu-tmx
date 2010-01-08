@@ -1,5 +1,10 @@
 module TMX
   class Map
+    autoload :TileCache, 'tmx/map/tile_cache'
+    autoload :XMLLoader, 'tmx/map/xml_loader'
+    
+    include XMLLoader
+    
     attr_reader :window
     
     attr_reader :properties
@@ -29,6 +34,7 @@ module TMX
       raise "Only orthogonal maps are currently supported"  unless mapdef['orientation'] == 'orthogonal'
       
       @window = window
+      @cache  = TileCache.new self
       
       @tile_width  = mapdef['tilewidth'].to_i
       @tile_height = mapdef['tileheight'].to_i
@@ -67,81 +73,14 @@ module TMX
         @object_groups[name] = group
       end # object groups
       
-      rebuild_map_cache!
+      @cache.rebuild!
     end # initialize
     
-    def rebuild_global_tile_set!
-      @global_tile_set = []
-      @tile_sets.each_value do |tile_set|
-        @global_tile_set[tile_set.range] = tile_set.tiles
-      end
-    end
-    
-    def rebuild_map_cache!
-      rebuild_global_tile_set! unless @global_tile_set
-      @map_cache = []
-      @layers.each_value.with_index do |layer, layer_index|
-        (0...@height).each do |y|
-          (0...@width).each do |x|
-            index   = _cache_tile_index layer_index, x, y
-            tile_id = layer[x, y]
-            @map_cache[index] = @global_tile_set[tile_id]
-          end
-        end
-      end
-    end # rebuild_map!
-    
     def draw x_off, y_off, z_off = 0, x_range = 0...@width, y_range = 0...@height
-      y_range.each do |y|
-        tile_y_off = y_off + y * @tile_height
-        
-        x_range.each do |x|
-          tile_x_off = x_off + x * @tile_width
-          
-          range = _cache_tile_range x, y 
-          @map_cache[range].each.with_index do |image, z|
-            next if image.nil?
-            image.draw tile_x_off, tile_y_off, z_off + z
-          end
-          
-        end
-      end
-    end # draw
+      @cache.draw x_off, y_off, z_off, x_range, y_range
+    end
     
     protected
-    
-    def parse_tile_set_def xml
-      properties = xml.tmx_parse_attributes
-      image_path = File.absolute_path xml.xpath('image/@source').first.value, File.dirname(xml.document.url)
-      TileSet.new self, image_path, properties
-    end
-    
-    def parse_layer_def xml
-      properties = xml.tmx_parse_properties.merge! xml.tmx_parse_attributes
-      Layer.new self, xml.tmx_data, properties
-    end
-    
-    def parse_object_group_def xml
-      properties = xml.tmx_parse_properties.merge! xml.tmx_parse_attributes
-      group = ObjectGroup.new self, properties
-      
-      xml.xpath('object').each do |child|
-        parse_object_def child, group
-      end
-      
-      group
-    end # parse_object_group_def
-    
-    def parse_object_def xml, group
-      properties = xml.tmx_parse_properties.merge! xml.tmx_parse_attributes
-      name       = properties.delete(:name)
-      
-      [:x, :y, :width, :height].each do |key|
-        properties[key] = properties[key] * @scale_units
-      end if @scale_units
-      
-      on_object name, group, properties
-    end
     
     def on_object name, group, properties
       if @on_object
@@ -150,14 +89,5 @@ module TMX
         properties
       end
     end # on_object
-    
-    def _cache_tile_index layer_index, x, y
-      y * @width * @layers.count + x * @layers.count + layer_index
-    end
-    
-    def _cache_tile_range x, y
-      first = _cache_tile_index 0, x, y
-      first...(first + @layers.count)
-    end
   end # Map
 end
