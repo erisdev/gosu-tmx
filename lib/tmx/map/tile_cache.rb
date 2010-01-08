@@ -18,6 +18,8 @@ module TMX
     end
     
     def rebuild_tile_set!
+      raise RuntimeError, "tile set information has been discarded" if @map.tile_sets.nil?
+      
       @tile_cache.clear
       @map.tile_sets.each_value do |tile_set|
         @tile_cache[tile_set.range] = tile_set.tiles
@@ -25,6 +27,8 @@ module TMX
     end
     
     def rebuild_map!
+      raise RuntimeError, "layer information has been discarded" if @map.tile_sets.nil?
+      
       @map_cache.clear
       
       @layer_count = @map.layers.count

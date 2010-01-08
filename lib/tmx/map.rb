@@ -14,12 +14,34 @@ module TMX
     attr_reader :tile_sets, :layers, :object_groups
     
     DEFAULT_OPTIONS = {
+      # Scales pixel units to tile units (if true) or user-defined scale (if
+      # numeric) when passing them to callbacks.
       :scale_units => true,
+      
+      # Hooks for object, layer and tile set creation. Only on_object is
+      # implemented so far.
+      :on_tile_set => nil,
+      :on_layer    => nil,
       :on_object   => nil,
+      
+      # This option discards all layer, object group and tile set info after
+      # building the tile cache; uses less memory if you don't intend to
+      # modify the map at run time.
+      :discard_structure   => false,
+      
+      # These three options allow finer grained control of what to throw away
+      # in case you intend to modify only certain aspects of the map.
+      :discard_layer_info  => false,
+      :discard_tile_info   => false,
+      :discard_object_info => false,
     }
     
     def initialize window, file_name, options = {}
       options = DEFAULT_OPTIONS.merge options
+      
+      # TODO move this XML code to an external module
+      # TODO allow file name or xml document?
+      # TODO allow other map formats?
       
       mapdef = File.open(file_name) do |io|
         doc = Nokogiri::XML(io) { |conf| conf.noent.noblanks }
@@ -30,6 +52,7 @@ module TMX
         doc.root
       end
       
+      # TODO proper version check; learn about TMX versions if there are any
       raise "Only version 1.0 maps are currently supported" unless mapdef['version']     == '1.0'
       raise "Only orthogonal maps are currently supported"  unless mapdef['orientation'] == 'orthogonal'
       
@@ -74,6 +97,13 @@ module TMX
       end # object groups
       
       @cache.rebuild!
+      
+      discard_structure = @properties.delete(:discard_structure)
+      
+      @layers        = nil if @properties.delete(:discard_layer_info)  || discard_structure
+      @tile_sets     = nil if @properties.delete(:discard_tile_info)   || discard_structure
+      @object_groups = nil if @properties.delete(:discard_object_info) || discard_structure
+      
     end # initialize
     
     def create_tile_set name, file_name_or_images, properties
