@@ -30,6 +30,14 @@ module TMX
       @tile_ids[offset(x, y)] = id
     end
     
+    def each_tile_id &block
+      y_range.each do |y|
+        x_range.each do |x|
+          yield x, y, @tile_ids[offset(x, y)]
+        end
+      end
+    end # each_tile_id
+    
     def x_range; 0...@width  end
     def y_range; 0...@height end
     
