@@ -13,8 +13,8 @@ module TMX
       @tile_height = @properties.delete :tileheight
       
       @tiles = case file_name_or_images
-        when String then file_name_or_images.dup
-        when Array  then Gosu::Image.load_tiles(@map.window, file_name, @tile_width, @tile_height, true).freeze
+        when String then Gosu::Image.load_tiles(@map.window, file_name_or_images, @tile_width, @tile_height, true).freeze
+        when Array  then file_name_or_images.dup
         when nil    then []
         else raise ArgumentError, "must supply a file name or an array of images"
         end

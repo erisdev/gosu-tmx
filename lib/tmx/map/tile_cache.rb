@@ -27,7 +27,7 @@ module TMX
     end
     
     def rebuild_map!
-      raise RuntimeError, "layer information has been discarded" if @map.tile_sets.nil?
+      raise RuntimeError, "layer information has been discarded" if @map.layers.nil?
       
       @map_cache.clear
       
