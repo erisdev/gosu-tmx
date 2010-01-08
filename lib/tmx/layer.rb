@@ -10,7 +10,12 @@ module TMX
       @width  = @properties.delete(:width)     or raise ArgumentError, "layer width is required"
       @height = @properties.delete(:height)    or raise ArgumentError, "layer height is required"
       
-      @tile_ids = data.unpack('V*')
+      @tile_ids = case data
+        when String then data.unpack('V*')
+        when Array  then data.dup
+        when nil    then Array.new @width * @height, 0
+        else raise ArgumentError, "data must be a binary string or an array of integers"
+        end
     end # initialize
     
     def map; @map.__getobj__ end

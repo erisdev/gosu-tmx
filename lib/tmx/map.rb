@@ -76,6 +76,18 @@ module TMX
       @cache.rebuild!
     end # initialize
     
+    def create_tile_set name, file_name_or_images, properties
+      raise NotImplementedError
+    end
+    
+    def create_layer name, data, properties
+      raise NotImplementedError
+    end
+    
+    def create_object_group name, properties
+      raise NotImplementedError
+    end
+    
     def draw x_off, y_off, z_off = 0, x_range = 0...@width, y_range = 0...@height
       @cache.draw x_off, y_off, z_off, x_range, y_range
     end
