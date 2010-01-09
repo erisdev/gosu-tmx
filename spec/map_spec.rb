@@ -1,13 +1,17 @@
 require File.join(File.dirname(__FILE__), 'spec_helper')
 describe 'Map' do
   it 'can load the test map' do
-    $map = TMX::Map.new $window, File.join($data_dir, 'test.tmx')
+    $map = TMX::Map.new $window, File.join($data_dir, 'test.tmx'),
+      :scale_units => false
     $map.should.is_a? TMX::Map
   end
   
   it 'has the correct dimensions' do
-    $map.width.should  == 16
-    $map.height.should == 16
+    $map.columns.should == 16
+    $map.rows.should    == 16
+    
+    $map.width.should  == 16 * $map.tile_width
+    $map.height.should == 16 * $map.tile_height
   end
   
   it 'has the correct tile dimensions' do

@@ -8,6 +8,7 @@ module TMX
     attr_reader :window
     
     attr_reader :properties
+    attr_reader :columns,    :rows
     attr_reader :width,      :height
     attr_reader :tile_width, :tile_height
     
@@ -16,7 +17,7 @@ module TMX
     DEFAULT_OPTIONS = {
       # Scales pixel units to tile units (if true) or user-defined scale (if
       # numeric) when passing them to callbacks.
-      :scale_units => true,
+      :scale_units => false,
       
       # Hooks for object, layer and tile set creation. Only on_object is
       # implemented so far.
@@ -62,12 +63,24 @@ module TMX
       @tile_width  = mapdef['tilewidth'].to_i
       @tile_height = mapdef['tileheight'].to_i
       
-      @width  = mapdef['width'].to_i
-      @height = mapdef['height'].to_i
+      @columns = mapdef['width'].to_i
+      @rows    = mapdef['height'].to_i
       
-      @scale_units = options[:scale_units] \
-        ? 1.0 / [@tile_height, @tile_width].min \
-        : false
+      @scale_units = case options[:scale_units]
+        when Numeric      then options[:scale_units].to_f
+        when :tile_width  then 1.0 / @tile_width
+        when :tile_height then 1.0 / @tile_height
+        when true         then 1.0 / [@tile_width, @tile_height].min
+        else false
+        end 
+      
+      if @scale_units
+        @width  = @columns.to_f * @scale_units
+        @height = @rows.to_f    * @scale_units
+      else
+        @width  = @columns * @tile_width
+        @height = @rows    * @tile_height
+      end
       
       @properties = mapdef.tmx_parse_properties
       
@@ -118,7 +131,7 @@ module TMX
       raise NotImplementedError
     end
     
-    def draw x_off, y_off, z_off = 0, x_range = 0...@width, y_range = 0...@height
+    def draw x_off, y_off, z_off = 0, x_range = 0...@columns, y_range = 0...@rows
       @cache.draw x_off, y_off, z_off, x_range, y_range
     end
     

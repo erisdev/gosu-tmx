@@ -8,7 +8,7 @@ module TMX
       
       @layer_count = 0
       
-      @width,      @height      = 0, 0
+      @columns,    @rows        = 0, 0
       @tile_width, @tile_height = 0, 0
     end # initialize
     
@@ -33,12 +33,12 @@ module TMX
       
       @layer_count = @map.layers.count
       
-      @width,      @height      = @map.width,      @map.height
+      @columns,    @rows        = @map.columns,    @map.rows
       @tile_width, @tile_height = @map.tile_width, @map.tile_height
       
       @map.layers.each_value.with_index do |layer, layer_index|
-        (0...@height).each do |y|
-          (0...@width).each do |x|
+        (0...@rows).each do |y|
+          (0...@columns).each do |x|
             index   = _tile_index layer_index, x, y
             tile_id = layer[x, y]
             @map_cache[index] = @tile_cache[tile_id]
@@ -48,8 +48,8 @@ module TMX
     end # rebuild_map!
     
     def draw x_off, y_off, z_off, x_range, y_range
-      x_range = [x_range.min, 0].max .. [x_range.max, @width  - 1].min
-      y_range = [y_range.min, 0].max .. [y_range.max, @height - 1].min
+      x_range = [x_range.min, 0].max .. [x_range.max, @columns  - 1].min
+      y_range = [y_range.min, 0].max .. [y_range.max, @rows     - 1].min
       
       y_range.each do |y|
         tile_y_off = y_off + y * @tile_height
@@ -70,7 +70,7 @@ module TMX
     protected
     
     def _tile_index layer_index, x, y
-      y * @width * @layer_count + x * @layer_count + layer_index
+      y * @columns * @layer_count + x * @layer_count + layer_index
     end
     
     def _tile_range x, y
