@@ -18,7 +18,8 @@ module TMX
       group = ObjectGroup.new self, properties
     
       xml.xpath('object').each do |child|
-        parse_object_def child, group
+        obj = parse_object_def(child, group)
+        group.add obj if obj
       end
     
       group
