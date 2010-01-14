@@ -1,6 +1,6 @@
 module TMX
   class Map
-    autoload :TileCache, 'tmx/map/tile_cache'
+    # autoload :TileCache, 'tmx/map/tile_cache'
     autoload :XMLLoader, 'tmx/map/xml_loader'
     
     include XMLLoader
@@ -12,7 +12,7 @@ module TMX
     attr_reader :width,      :height
     attr_reader :tile_width, :tile_height
     
-    attr_reader :tile_sets, :layers, :object_groups
+    attr_reader :tile_set, :layers, :object_groups
     
     DEFAULT_OPTIONS = {
       # Scales pixel units to tile units (if true) or user-defined scale (if
@@ -33,7 +33,6 @@ module TMX
       # These three options allow finer grained control of what to throw away
       # in case you intend to modify only certain aspects of the map.
       :discard_layer_info  => false,
-      :discard_tile_info   => false,
       :discard_object_info => false,
     }
     
@@ -58,7 +57,7 @@ module TMX
       raise "Only orthogonal maps are currently supported"  unless mapdef['orientation'] == 'orthogonal'
       
       @window = window
-      @cache  = TileCache.new self
+      # @cache  = TileCache.new self
       
       @tile_width  = mapdef['tilewidth'].to_i
       @tile_height = mapdef['tileheight'].to_i
@@ -84,7 +83,8 @@ module TMX
       
       @properties = mapdef.tmx_parse_properties
       
-      @tile_sets     = Hash[]
+      @tile_set = TileSet.new self
+      
       @layers        = Hash[]
       @object_groups = Hash[]
       
@@ -92,9 +92,7 @@ module TMX
       @on_object = options[:on_object]
       
       mapdef.xpath('tileset').each do |xml|
-        tile_set = parse_tile_set_def xml
-        name     = tile_set.properties[:name]
-        @tile_sets[name] = tile_set
+        @tile_set.load_tiles *parse_tile_set_def(xml)
       end
       
       mapdef.xpath('layer').each do |xml|
@@ -109,7 +107,7 @@ module TMX
         @object_groups[name] = group
       end # object groups
       
-      @cache.rebuild!
+      # @cache.rebuild!
       
       discard_structure = @properties.delete(:discard_structure)
       
@@ -132,8 +130,11 @@ module TMX
     end
     
     def draw x_off, y_off, z_off = 0, x_range = 0...@columns, y_range = 0...@rows
-      @cache.draw x_off, y_off, z_off, x_range, y_range
-    end
+      # @cache.draw x_off, y_off, z_off, x_range, y_range
+      @layers.each_value.with_index do |layer, index|
+        layer.draw x_off, y_off, z_off + index, x_range, y_range
+      end
+    end # draw
     
     protected
     

@@ -14,9 +14,10 @@ well. :)
 ### WHAT IS MISSING
 
 Here's what's not: so far, map data is loaded and layers, object groups and
-tile sets are created and the map is capable of drawing itself. Needs a better
-way to cache the tile layout so it doesn't have to be rebuilt every time
-something changes.
+tile sets are created. The map (and each individual layer) is capable of
+drawing itself. TileCache is no longer being used for now, but it might come
+back; tile sets are flattened into one to avoid having to check which one to
+use.
 
 Validating the XML document to its DTD would be nice too, but I'll be buggered
 if I can get Nokogiri to actually load the DTD. There is inadequate or no

@@ -1,19 +1,22 @@
 module TMX
   class Layer
     attr_reader :properties
-    attr_reader :width, :height
+    attr_reader :columns, :rows
     
     def initialize map, data, properties
       @map        = WeakRef.new map
       @properties = properties.dup
       
-      @width  = @properties.delete(:width)     or raise ArgumentError, "layer width is required"
-      @height = @properties.delete(:height)    or raise ArgumentError, "layer height is required"
+      @columns = @properties.delete(:width)  or raise ArgumentError, "layer width is required"
+      @rows    = @properties.delete(:height) or raise ArgumentError, "layer height is required"
+      
+      alpha  = @properties.delete(:opacity) || 1.0
+      @color = Gosu::Color.new (255 * alpha).round, 255, 255, 255
       
       @tile_ids = case data
         when String then data.unpack('V*')
         when Array  then data.dup
-        when nil    then Array.new @width * @height, 0
+        when nil    then Array.new @columns * @rows, 0
         else raise ArgumentError, "data must be a binary string or an array of integers"
         end
     end # initialize
@@ -38,13 +41,36 @@ module TMX
       end
     end # each_tile_id
     
-    def x_range; 0...@width  end
-    def y_range; 0...@height end
+    def x_range; 0...@columns end
+    def y_range; 0...@rows    end
+    
+    def draw x_off, y_off, z_off, x_range, y_range
+      x_range = [x_range.min, 0].max .. [x_range.max, @columns  - 1].min
+      y_range = [y_range.min, 0].max .. [y_range.max, @rows     - 1].min
+      
+      tile_set    = @map.tile_set
+      tile_width  = @map.tile_width
+      tile_height = @map.tile_height
+      
+      y_range.each do |y|
+        tile_y_off = y_off + y * tile_height
+        
+        x_range.each do |x|
+          tile_x_off = x_off + x * tile_width
+          tile_index = @tile_ids[offset(x, y)]
+          
+          image = tile_set[tile_index]
+          next if image.nil?
+          
+          image.draw tile_x_off, tile_y_off, z_off, 1, 1, @color
+        end
+      end
+    end
     
     private
     
     def offset x, y
-      x + y * @width
+      x + y * @columns
     end
     
   end # Layer

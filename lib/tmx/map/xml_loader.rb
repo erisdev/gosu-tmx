@@ -5,7 +5,7 @@ module TMX
     def parse_tile_set_def xml
       properties = xml.tmx_parse_attributes
       image_path = File.absolute_path xml.xpath('image/@source').first.value, File.dirname(xml.document.url)
-      TileSet.new self, image_path, properties
+      [ image_path, properties ]
     end
   
     def parse_layer_def xml

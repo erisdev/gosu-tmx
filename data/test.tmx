@@ -7,9 +7,9 @@
  <tileset firstgid="1" name="debug" tilewidth="16" tileheight="16">
   <image source="test-tiles.png"/>
  </tileset>
- <layer name="background" width="16" height="16">
+ <layer name="background" width="16" height="16" opacity="0.75">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGAWjYBSMVAAALq+17wAEAAA=
+   H4sIAAAAAAAAA2NgGAXogInK5rGh0aNgFAwWAADxvIrYAAQAAA==
   </data>
  </layer>
  <layer name="obstacle" width="16" height="16">
@@ -36,9 +36,9 @@
    </properties>
   </object>
  </objectgroup>
- <layer name="foreground" width="16" height="16">
+ <layer name="foreground" width="16" height="16" opacity="0.5">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGAWjYBSMVAAALq+17wAEAAA=
+   H4sIAAAAAAAAA2NgGAWjYPABRiBmIoAJATYCeCD1EwMo1U8MAADF4i9MAAQAAA==
   </data>
  </layer>
 </map>

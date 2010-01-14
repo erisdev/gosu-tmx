@@ -1,41 +1,35 @@
 module TMX
   class TileSet
-    attr_reader :properties
-    attr_reader :tiles
-    attr_reader :first_id,   :last_id
-    attr_reader :tile_width, :tile_height
+    def initialize map
+      @map   = WeakRef.new map
+      @tiles = [ nil ]
+    end
     
-    def initialize map, file_name_or_images, properties
-      @map        = WeakRef.new map
-      @properties = properties.dup
+    def load_tiles file_name_or_images, properties = {}
+      properties  = properties.dup
+      first_id    = properties.delete :firstgid
+      tile_width  = properties.delete :tilewidth
+      tile_height = properties.delete :tileheight
       
-      @tile_width  = @properties.delete :tilewidth
-      @tile_height = @properties.delete :tileheight
-      
-      @tiles = case file_name_or_images
-        when String then Gosu::Image.load_tiles(@map.window, file_name_or_images, @tile_width, @tile_height, true).freeze
+      @tiles[first_id..-1] = case file_name_or_images
+        when String then Gosu::Image.load_tiles(@map.window, file_name_or_images, tile_width, tile_height, true).freeze
         when Array  then file_name_or_images.dup
-        when nil    then []
         else raise ArgumentError, "must supply a file name or an array of images"
         end
       
-      @first_id = @properties.delete :firstgid
-      @last_id  = @first_id + @tiles.count - 1
-    end
+    end # load_tiles
     
     def map; @map.__getobj__ end
     
     def [] tile_id
-      raise IndexError unless range.include? tile_id
-      @tiles[tile_id - @first_id]
+      raise IndexError unless (0...@tiles.length).include? tile_id
+      @tiles[tile_id]
     end
     
     def []= tile_id, image
-      raise IndexError unless range.include? tile_id
-      @tiles[tile_id - @first_id] = image
+      raise IndexError unless (1...@tiles.length).include? tile_id
+      @tiles[tile_id] = image
     end
-    
-    def range; @first_id..@last_id end
     
   end
 end

@@ -19,11 +19,10 @@ describe 'Map' do
     $map.tile_height.should == 16
   end
   
-  it 'loads all tile sets' do
-    $map.tile_sets.count.should == 1
-    $map.tile_sets.each do |name, ts|
-      TMX::TileSet.should === ts
-    end
+  it 'loads all tile set definitions into one flat set' do
+    $map.tile_set.should.is_a? TMX::TileSet
+    $map.tile_set[0].should == nil
+    $map.tile_set[1].should.is_a? Gosu::Image
   end
   
   it 'loads all layers' do
