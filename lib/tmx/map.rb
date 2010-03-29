@@ -140,7 +140,7 @@ module TMX
     
     def on_object name, group, properties
       if @on_object
-        @on_object.call group, name, properties
+        @on_object.call name, group, properties
       else
         properties
       end

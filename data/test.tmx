@@ -21,8 +21,16 @@
   <properties>
    <property name="what_is_this" value="it's boxes ok"/>
   </properties>
-  <object name="cardboard_box" type="box" x="160" y="160" width="32" height="32"/>
-  <object name="stone_block" type="box" x="192" y="32" width="32" height="32"/>
+  <object name="cardboard_box" type="Box" x="160" y="160" width="32" height="32">
+   <properties>
+    <property name="image" value="tid:16"/>
+   </properties>
+  </object>
+  <object name="stone_block" type="Box" x="192" y="32" width="32" height="32">
+   <properties>
+    <property name="image" value="tid:16"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup name="doors" width="16" height="16">
   <object name="door1" type="door" x="128" y="208" width="16" height="32">

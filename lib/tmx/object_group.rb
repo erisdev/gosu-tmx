@@ -3,11 +3,14 @@ module TMX
     include Enumerable
     
     attr_reader :properties
+    attr_reader :name
     
     def initialize map, properties = {}
       @map        = WeakRef.new map
       @properties = properties
       @objects    = Hash[]
+      
+      @name = properties.delete :name
     end
     
     def map; @map.__getobj__ end
