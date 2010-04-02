@@ -6,7 +6,7 @@ title: gosu-tmx
 ## gosu-tmx
 ### introduction
 
-__gosu-tmx__ is, as the name implies, a TMX map loader for Gosu. Most importantly, it supports an arbitrary number of layers and provides hooks for object group creation so it can be integrated with other libraries built on top of Gosu. Don't believe me? Have a look at this:
+__gosu-tmx__ is, as the name implies, a [TMX][TMX] map loader for [Gosu][GOSU]. Most importantly, it supports an arbitrary number of layers and provides hooks for object group creation so it can be integrated with other libraries built on top of Gosu. Don't believe me? Have a look at this:
 
 [tmx-test.rb](http://gist.github.com/346617)
 
@@ -18,6 +18,8 @@ Now that I've got your attention, why not help out? There's always room for impr
 * [issue tracker][ISSU]
 * [wiki][WIKI]
 
+[TMX]: http://mapeditor.org/
+[GOSU]: http://www.libgosu.org/
 [REPO]: http://github.com/erisdiscord/gosu-tmx
 [ISSU]: http://github.com/erisdiscord/gosu-tmx/issues
 [WIKI]: http://wiki.github.com/erisdiscord/gosu-tmx
