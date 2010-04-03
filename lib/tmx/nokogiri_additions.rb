@@ -11,10 +11,17 @@ class Nokogiri::XML::Node
   def tmx_parse
     str = to_s
     case str
-    when %r(^ [+-]?     \d+        / [+-]?  \d+   $)x then str.to_r
-    when %r(^ [+-]? (?: \d+ \. \d+   [+-] ) \d+ i $)x then str.to_c
-    when %r(^ [+-]?     \d+ \. \d+                $)x then str.to_f
-    when %r(^ [+-]?     \d+                       $)x then str.to_i
+    when ''                                            then nil
+    when %r(^ (?: false | no  | off )             $)ix then false
+    when %r(^ (?: true  | yes | on  )             $)ix then true
+    when %r(^ [+-]?     \d+        / [+-]?  \d+   $)ix then str.to_r
+    when %r(^ [+-]? (?: \d+ \. \d+   [+-] ) \d+ i $)ix then str.to_c
+    when %r(^ [+-]?     \d+ \. \d+                $)ix then str.to_f
+    when %r(^ [+-]?     \d+                       $)ix then str.to_i
+    when %r(^ \# [0-9a-f]{6} $)ix
+      Gosu::Color.new 0xff000000 | str[1..6].to_i(16)
+    when %r(^ \# [0-9a-f]{8} $)ix
+      Gosu::Color.new str[1..8].to_i(16)
     else str
     end
   end

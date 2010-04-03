@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="16" height="16" tilewidth="16" tileheight="16">
  <properties>
-  <property name="background_color" value="0xff224422"/>
+  <property name="bg1" value="#402010"/>
+  <property name="bg2" value="#100000"/>
+	<property name="fg1" value="#00ff0000"/>
+	<property name="fg2" value="#10ff0000"/>
   <property name="display_name" value="Test Map"/>
  </properties>
  <tileset firstgid="1" name="debug" tilewidth="16" tileheight="16">

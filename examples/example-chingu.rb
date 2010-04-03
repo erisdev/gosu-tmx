@@ -2,6 +2,10 @@ require 'chingu'
 require 'tmx'
 require 'opengl' # Chingu needs it for retrofy
 
+class Float
+  INFINITY = 1.0 / 0.0 unless const_defined? :INFINITY
+end
+
 class Box < Chingu::GameObject
   # "It's just a box."
   
@@ -77,9 +81,21 @@ class MapState < Chingu::GameState
   
   def draw
     super
+    
+    fill_gradient \
+      :from   => @map.properties[:bg1],
+      :to     => @map.properties[:bg2],
+      :zorder => -Float::INFINITY
+    
     # map is not a game object
     @map.draw -viewport.x, -viewport.y
-    @banner.draw 8, 8, 1.0/0.0
+    
+    fill_gradient \
+      :from   => @map.properties[:fg1],
+      :to     => @map.properties[:fg2],
+      :zorder => Float::INFINITY
+    
+    @banner.draw 8, 8, Float::INFINITY
   end
 end
 
