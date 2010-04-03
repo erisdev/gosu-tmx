@@ -8,6 +8,14 @@ class Box < Chingu::GameObject
   # (Chingu takes care of everything we need here (it's magic))
 end
 
+class Door < Chingu::GameObject
+  # this ought to take you somewhere else
+end
+
+class Dude < Chingu::GameObject
+	# maybe your player logic goes here
+end
+
 class MapState < Chingu::GameState
   has_trait :viewport
   
@@ -17,19 +25,21 @@ class MapState < Chingu::GameState
     # load our map
     @map = TMX::Map.new $window, map_name,
       :on_object => method(:create_chingu_object)
+    @banner = Gosu::Image.from_text $window,
+      @map.properties[:display_name],
+      'Helvetica', 24
     
+    $window.caption = 'gosu-tmx demo - %s' % @map.properties[:display_name]
   end
   
   def create_chingu_object name, group, properties
-    # bail out on other groups
-    return properties unless group.name == 'boxes'
-    
     map = group.map
     obj_class = Kernel.const_get properties[:type] rescue nil
     
     # assert that the object is a valid type
     raise TypeError, "#{properties[:type]} is not a game object" \
-      unless obj_class.ancestors.include? Chingu::BasicGameObject
+      unless obj_class.is_a? Class \
+      and    obj_class.ancestors.include? Chingu::BasicGameObject
     
     # load image
     image_name = properties[:image]
@@ -42,7 +52,7 @@ class MapState < Chingu::GameState
         Gosu::Image['default']
       else
         # image as named
-        Gosu::Image[image_name]
+        Gosu::Image[File.join 'data', image_name]
       end
     
     # convert TMX properties to what Chingu is expecting
@@ -51,7 +61,8 @@ class MapState < Chingu::GameState
       :x        => properties[:x] + properties[:width]  / 2,
       :y        => properties[:y] + properties[:height] / 2,
       :factor_x => properties[:width].to_f  / image.width,
-      :factor_y => properties[:height].to_f / image.height
+      :factor_y => properties[:height].to_f / image.height,
+      :zorder   => 1
     
     # create and return the game object
     obj_class.create properties
@@ -68,6 +79,7 @@ class MapState < Chingu::GameState
     super
     # map is not a game object
     @map.draw -viewport.x, -viewport.y
+    @banner.draw 8, 8, 1.0/0.0
   end
 end
 
