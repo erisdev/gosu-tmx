@@ -8,7 +8,7 @@ title: gosu-tmx
 
 __gosu-tmx__ is, as the name implies, a [TMX][TMX] map loader for [Gosu][GOSU]. Most importantly, it supports an arbitrary number of layers and provides hooks for object group creation so it can be integrated with other libraries built on top of Gosu. Don't believe me? Have a look at this:
 
-[tmx-test.rb](http://gist.github.com/346617)
+<gist idref="346617"/>
 
 Now that I've got your attention, why not help out? There's always room for improvement, and I don't consider the library anywhere near complete. Comments and suggestions are welcome and encouraged.
 
